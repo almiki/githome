@@ -9,13 +9,13 @@ from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
 
 
 _refs_re = re.compile("^/([^/]+)/info/refs$")
-_post_re = re.compile("^/([^/]+)/(githome-[a-z]+-pack)$")
+_post_re = re.compile("^/([^/]+)/(git-[a-z]+-pack)$")
 
-_service_re = re.compile("^githome-[a-z\\-]+$")
+_service_re = re.compile("^git-[a-z\\-]+$")
 
 
 def _create_handler(repo_dir, bin_dir, lib_dir):
-    # bin_dir is the location of the githome binaries we'll execute.
+    # bin_dir is the location of the git binaries we'll execute.
     # lib_dir is the location of required dlls on Windows, which we'll use as
     # the cwd so they get loaded.
 
@@ -91,7 +91,7 @@ def _create_handler(repo_dir, bin_dir, lib_dir):
 
             action = match.group(2)
 
-            if action in ("githome-upload-pack", "githome-receive-pack",):
+            if action in ("git-upload-pack", "git-receive-pack",):
                 cmd = [os.path.join(bin_dir, action) if bin_dir is not None else action,
                        '--stateless-rpc',
                        os.path.join(repo_dir, project)]
@@ -151,24 +151,24 @@ if __name__ == "__main__":
     # anything other than personal home network stuff.
 
     # Windows examples:
-    # bin_dir: r"C:\Program Files\Git\mingw64\libexec\githome-core"
+    # bin_dir: r"C:\Program Files\Git\mingw64\libexec\git-core"
     # lib_dir: r"C:\Program Files\Git\mingw64\bin"
 
-    p = argparse.ArgumentParser(description='Super simple githome server.')
+    p = argparse.ArgumentParser(description='Super simple git server.')
     p.add_argument('--port', '-p', default=7811, dest="port", help="The port to listen on")
-    p.add_argument('--repo_dir', '-r', default='.', dest="repo_dir", help="The directory containing githome repos")
-    p.add_argument('--bin_dir', '-b', required=False, dest="bin_dir", help="The location of the githome binaries (e.g. githome-upload-pack)")
-    p.add_argument('--lib_dir', '-l', required=False, dest="lib_dir", help="The location of required githome libraries (dlls on Windows, used as cwd)")
+    p.add_argument('--repo_dir', '-r', default='.', dest="repo_dir", help="The directory containing git repos")
+    p.add_argument('--bin_dir', '-b', required=False, dest="bin_dir", help="The location of the git binaries (e.g. git-upload-pack)")
+    p.add_argument('--lib_dir', '-l', required=False, dest="lib_dir", help="The location of required git libraries (dlls on Windows, used as cwd)")
     args = p.parse_args()
 
     print "Starting server on port {}".format(args.port)
     print "Using repo dir {}".format(args.repo_dir)
 
     if args.bin_dir is not None:
-        print "Using githome bin dir {}".format(args.bin_dir)
+        print "Using git bin dir {}".format(args.bin_dir)
 
     if args.lib_dir is not None:
-        print "Using githome lib dir {}".format(args.lib_dir)
+        print "Using git lib dir {}".format(args.lib_dir)
 
     server = GitServer(port=args.port,
                        dir=args.repo_dir,
